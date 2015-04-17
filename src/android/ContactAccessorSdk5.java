@@ -174,7 +174,7 @@ public class ContactAccessorSdk5 extends ContactAccessor {
         WhereOptions whereOptions = buildWhereClause(fields, searchTerm);
 
         // Get all the id's where the search term matches the fields passed in.
-        Cursor idCursor = mApp.getActivity().getContentResolver().query(ContactsContract.Data.CONTENT_URI,
+        Cursor idCursor = mApp.getActivity().getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
                 new String[] { ContactsContract.Data.CONTACT_ID },
                 whereOptions.getWhere(),
                 whereOptions.getWhereArgs(),
