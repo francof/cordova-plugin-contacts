@@ -262,7 +262,7 @@ public class ContactAccessorSdk5 extends ContactAccessor {
         }
         
         // Do the id query
-        Cursor c = mApp.getActivity().getContentResolver().query(ContactsContract.Data.CONTENT_URI,
+        Cursor c = mApp.getActivity().getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
                 columnsToFetch.toArray(new String[] {}),
                 idOptions.getWhere(),
                 idOptions.getWhereArgs(),
