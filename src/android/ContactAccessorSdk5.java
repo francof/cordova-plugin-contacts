@@ -173,6 +173,26 @@ public class ContactAccessorSdk5 extends ContactAccessor {
         // Build the ugly where clause and where arguments for one big query.
         WhereOptions whereOptions = buildWhereClause(fields, searchTerm);
 
+        // Get all the id's where the search term matches the fields passed in.
+        Cursor idCursor = mApp.getActivity().getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                new String[] { ContactsContract.Data.CONTACT_ID },
+                whereOptions.getWhere(),
+                whereOptions.getWhereArgs(),
+                ContactsContract.Data.CONTACT_ID + " ASC");
+
+        // Create a set of unique ids
+        Set<String> contactIds = new HashSet<String>();
+        int idColumn = -1;
+        while (idCursor.moveToNext()) {
+            if (idColumn < 0) {
+                idColumn = idCursor.getColumnIndex(ContactsContract.Data.CONTACT_ID);
+            }
+            contactIds.add(idCursor.getString(idColumn));
+        }
+        idCursor.close();
+
+        // Build a query that only looks at ids
+        WhereOptions idOptions = buildIdClause(contactIds, searchTerm);
 
         // Determine which columns we should be fetching.
         HashSet<String> columnsToFetch = new HashSet<String>();
@@ -240,18 +260,17 @@ public class ContactAccessorSdk5 extends ContactAccessor {
         if (isRequired("photos", populate)) {
             columnsToFetch.add(ContactsContract.CommonDataKinds.Photo._ID);
         }
-
-        Cursor c = mApp.getActivity().getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-                columnsToFetch.toArray(new String[] {}),
-                null,
-                null,
-                ContactsContract.Data.CONTACT_ID + " ASC");
         
         // Do the id query
+        Cursor c = mApp.getActivity().getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                columnsToFetch.toArray(new String[] {}),
+                idOptions.getWhere(),
+                idOptions.getWhereArgs(),
+                ContactsContract.Data.CONTACT_ID + " ASC");
+         
         JSONArray contacts = populateContactArray(limit, populate, c);
         return contacts;
     }
-    
 
     /**
      * A special search that finds one contact by id
@@ -375,6 +394,8 @@ public class ContactAccessorSdk5 extends ContactAccessor {
 
                     if (mimetype.equals(ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
                             && isRequired("name", populate)) {
+                        Log.d(LOG_TAG, "name is found");
+                        Log.d(LOG_TAG, nameQuery(c));
                         contact.put("name", nameQuery(c));
                     }
                     else if (mimetype.equals(ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
