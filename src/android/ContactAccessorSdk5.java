@@ -250,7 +250,7 @@ public class ContactAccessorSdk5 extends ContactAccessor {
 
         Log.d(LOG_TAG, " bla bla " + columnsToFetch);
         Log.d(LOG_TAG, " bla bla ");
-        Cursor c = mApp.getActivity().getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+        Cursor c = mApp.getActivity().getContentResolver().query(ContactsContract.Data.CONTENT_URI,
                 columnsToFetch.toArray(new String[] {}),
                 whereOptions.getWhere(),
                 whereOptions.getWhereArgs(),
