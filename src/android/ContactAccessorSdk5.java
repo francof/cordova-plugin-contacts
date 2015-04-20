@@ -163,7 +163,7 @@ public class ContactAccessorSdk5 extends ContactAccessor {
         }
         
 
-        //Log.d(LOG_TAG, "Search Term = " + searchTerm);
+        Log.d(LOG_TAG, "Search Term = " + searchTerm);
         //Log.d(LOG_TAG, "Field Length = " + fields.length());
         //Log.d(LOG_TAG, "Fields = " + fields.toString());
 
@@ -180,19 +180,6 @@ public class ContactAccessorSdk5 extends ContactAccessor {
                 whereOptions.getWhereArgs(),
                 ContactsContract.Data.CONTACT_ID + " ASC");
 
-        // Create a set of unique ids
-        Set<String> contactIds = new HashSet<String>();
-        int idColumn = -1;
-        while (idCursor.moveToNext()) {
-            if (idColumn < 0) {
-                idColumn = idCursor.getColumnIndex(ContactsContract.Data.CONTACT_ID);
-            }
-            contactIds.add(idCursor.getString(idColumn));
-        }
-        idCursor.close();
-
-        // Build a query that only looks at ids
-        WhereOptions idOptions = buildIdClause(contactIds, searchTerm);
 
         // Determine which columns we should be fetching.
         HashSet<String> columnsToFetch = new HashSet<String>();
@@ -260,17 +247,20 @@ public class ContactAccessorSdk5 extends ContactAccessor {
         if (isRequired("photos", populate)) {
             columnsToFetch.add(ContactsContract.CommonDataKinds.Photo._ID);
         }
-        
-        // Do the id query
+
+        Log.d(LOG_TAG, " bla bla " + columnsToFetch);
+        Log.d(LOG_TAG, " bla bla ");
         Cursor c = mApp.getActivity().getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
                 columnsToFetch.toArray(new String[] {}),
-                idOptions.getWhere(),
-                idOptions.getWhereArgs(),
+                whereOptions.getWhere(),
+                whereOptions.getWhereArgs(),
                 ContactsContract.Data.CONTACT_ID + " ASC");
-         
+        
+        // Do the id query
         JSONArray contacts = populateContactArray(limit, populate, c);
         return contacts;
     }
+    
 
     /**
      * A special search that finds one contact by id
