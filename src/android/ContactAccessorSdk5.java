@@ -241,12 +241,10 @@ public class ContactAccessorSdk5 extends ContactAccessor {
             columnsToFetch.add(ContactsContract.CommonDataKinds.Photo._ID);
         }
 
-        Log.d(LOG_TAG, " bla bla " + columnsToFetch);
-        Log.d(LOG_TAG, " bla bla ");
         Cursor c = mApp.getActivity().getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
                 columnsToFetch.toArray(new String[] {}),
-                whereOptions.getWhere(),
-                whereOptions.getWhereArgs(),
+                null,
+                null,
                 ContactsContract.Data.CONTACT_ID + " ASC");
         
         // Do the id query
