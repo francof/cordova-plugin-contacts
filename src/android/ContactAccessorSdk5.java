@@ -173,13 +173,6 @@ public class ContactAccessorSdk5 extends ContactAccessor {
         // Build the ugly where clause and where arguments for one big query.
         WhereOptions whereOptions = buildWhereClause(fields, searchTerm);
 
-        // Get all the id's where the search term matches the fields passed in.
-        Cursor idCursor = mApp.getActivity().getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-                new String[] { ContactsContract.Data.CONTACT_ID },
-                whereOptions.getWhere(),
-                whereOptions.getWhereArgs(),
-                ContactsContract.Data.CONTACT_ID + " ASC");
-
 
         // Determine which columns we should be fetching.
         HashSet<String> columnsToFetch = new HashSet<String>();
@@ -250,7 +243,7 @@ public class ContactAccessorSdk5 extends ContactAccessor {
 
         Log.d(LOG_TAG, " bla bla " + columnsToFetch);
         Log.d(LOG_TAG, " bla bla ");
-        Cursor c = mApp.getActivity().getContentResolver().query(ContactsContract.Data.CONTENT_URI,
+        Cursor c = mApp.getActivity().getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
                 columnsToFetch.toArray(new String[] {}),
                 whereOptions.getWhere(),
                 whereOptions.getWhereArgs(),
