@@ -395,7 +395,7 @@ public class ContactAccessorSdk5 extends ContactAccessor {
                     if (mimetype.equals(ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
                             && isRequired("name", populate)) {
                         Log.d(LOG_TAG, "name is found");
-                        Log.d(LOG_TAG, nameQuery(c));
+                        Log.d(LOG_TAG, nameQuery(c).toString());
                         contact.put("name", nameQuery(c));
                     }
                     else if (mimetype.equals(ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
