@@ -68,14 +68,6 @@ public abstract class ContactAccessor {
                 map.put("nickname", true);
                 map.put("phoneNumbers", true);
                 map.put("emails", true);
-                map.put("addresses", true);
-                map.put("ims", true);
-                map.put("organizations", true);
-                map.put("birthday", true);
-                map.put("note", true);
-                map.put("urls", true);
-                map.put("photos", true);
-                map.put("categories", true);
             } else {
                 for (int i = 0; i < desiredFields.length(); i++) {
                     key = desiredFields.getString(i);

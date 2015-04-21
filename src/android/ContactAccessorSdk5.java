@@ -174,6 +174,7 @@ public class ContactAccessorSdk5 extends ContactAccessor {
         WhereOptions whereOptions = buildWhereClause(fields, searchTerm);
 
         // Get all the id's where the search term matches the fields passed in.
+        /*
         Cursor idCursor = mApp.getActivity().getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
                 new String[] { ContactsContract.Data.CONTACT_ID },
                 whereOptions.getWhere(),
@@ -193,7 +194,7 @@ public class ContactAccessorSdk5 extends ContactAccessor {
 
         // Build a query that only looks at ids
         WhereOptions idOptions = buildIdClause(contactIds, searchTerm);
-
+        */
         // Determine which columns we should be fetching.
         HashSet<String> columnsToFetch = new HashSet<String>();
         columnsToFetch.add(ContactsContract.Data.CONTACT_ID);
@@ -262,10 +263,10 @@ public class ContactAccessorSdk5 extends ContactAccessor {
         }
         
         // Do the id query
-        Cursor c = mApp.getActivity().getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+        Cursor c = mApp.getActivity().getContentResolver().query(ContactsContract.Data.CONTENT_URI,
                 columnsToFetch.toArray(new String[] {}),
-                idOptions.getWhere(),
-                idOptions.getWhereArgs(),
+                ContactsContract.Contacts.HAS_PHONE_NUMBER + " = 1",
+                null,
                 ContactsContract.Data.CONTACT_ID + " ASC");
          
         JSONArray contacts = populateContactArray(limit, populate, c);
