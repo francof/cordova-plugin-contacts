@@ -210,7 +210,7 @@ public class ContactAccessorSdk5 extends ContactAccessor {
         // Build a query that only looks at ids
         WhereOptions idOptions = buildIdClause(contactIds, searchTerm);
         */
-        WhereOptions idOptions = buildIdClause(contactIds, searchTerm, hasPhoneNumber);
+       // WhereOptions idOptions = buildIdClause(contactIds, searchTerm, hasPhoneNumber);
 
         // Determine which columns we should be fetching.
         HashSet<String> columnsToFetch = new HashSet<String>();
