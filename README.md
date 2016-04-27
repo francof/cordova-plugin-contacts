@@ -1,25 +1,29 @@
+---
+title: Contacts
+description: Manage the contacts on the device.
+---
 <!---
- license: Licensed to the Apache Software Foundation (ASF) under one
-         or more contributor license agreements.  See the NOTICE file
-         distributed with this work for additional information
-         regarding copyright ownership.  The ASF licenses this file
-         to you under the Apache License, Version 2.0 (the
-         "License"); you may not use this file except in compliance
-         with the License.  You may obtain a copy of the License at
-
-           http://www.apache.org/licenses/LICENSE-2.0
-
-         Unless required by applicable law or agreed to in writing,
-         software distributed under the License is distributed on an
-         "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-         KIND, either express or implied.  See the License for the
-         specific language governing permissions and limitations
-         under the License.
+# license: Licensed to the Apache Software Foundation (ASF) under one
+#         or more contributor license agreements.  See the NOTICE file
+#         distributed with this work for additional information
+#         regarding copyright ownership.  The ASF licenses this file
+#         to you under the Apache License, Version 2.0 (the
+#         "License"); you may not use this file except in compliance
+#         with the License.  You may obtain a copy of the License at
+#
+#           http://www.apache.org/licenses/LICENSE-2.0
+#
+#         Unless required by applicable law or agreed to in writing,
+#         software distributed under the License is distributed on an
+#         "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+#         KIND, either express or implied.  See the License for the
+#         specific language governing permissions and limitations
+#         under the License.
 -->
 
-# cordova-plugin-contacts
+[![Build Status](https://travis-ci.org/apache/cordova-plugin-contacts.svg?branch=master)](https://travis-ci.org/apache/cordova-plugin-contacts)
 
-[![Build Status](https://travis-ci.org/apache/cordova-plugin-contacts.svg)](https://travis-ci.org/apache/cordova-plugin-contacts)
+# cordova-plugin-contacts
 
 This plugin defines a global `navigator.contacts` object, which provides access to the device contacts database.
 
@@ -45,11 +49,22 @@ marketplaces may require the app to provide a just-in-time notice and
 obtain the user's permission before accessing contact data.  A
 clear and easy-to-understand user experience surrounding the use of
 contact data helps avoid user confusion and perceived misuse of
-contact data.  For more information, please see the Privacy Guide.
+contact data.  For more information, please see the [Privacy Guide](http://cordova.apache.org/docs/en/latest/guide/appdev/privacy/index.html).
+
+Report issues with this plugin on the [Apache Cordova issue tracker](https://issues.apache.org/jira/issues/?jql=project%20%3D%20CB%20AND%20status%20in%20%28Open%2C%20%22In%20Progress%22%2C%20Reopened%29%20AND%20resolution%20%3D%20Unresolved%20AND%20component%20%3D%20%22Plugin%20Contacts%22%20ORDER%20BY%20priority%20DESC%2C%20summary%20ASC%2C%20updatedDate%20DESC)
 
 ## Installation
 
+This requires cordova 5.0+ ( current stable v1.0.0 )
+
     cordova plugin add cordova-plugin-contacts
+Older versions of cordova can still install via the __deprecated__ id ( stale v0.2.16 )
+
+    cordova plugin add org.apache.cordova.contacts
+It is also possible to install via repo url directly ( unstable )
+
+    cordova plugin add https://github.com/apache/cordova-plugin-contacts.git
+
 
 ### Firefox OS Quirks
 
@@ -69,8 +84,10 @@ __WARNING__: All privileged apps enforce [Content Security Policy](https://devel
 
 ### Windows Quirks
 
-Any contacts returned from `find` and `pickContact` methods are readonly, so your application cannot modify them.
+**Prior to Windows 10:** Any contacts returned from `find` and `pickContact` methods are readonly, so your application cannot modify them.
 `find` method available only on Windows Phone 8.1 devices.
+
+**Windows 10 and above:** Contacts may be saved and will be saved to app-local contacts storage.  Contacts may also be deleted.
 
 ### Windows 8 Quirks
 
@@ -109,7 +126,7 @@ database, for which you need to invoke the `Contact.save` method.
 - BlackBerry 10
 - Firefox OS
 - iOS
-- Windows Phone 7 and 8
+- Windows Phone 8
 
 ### Example
 
@@ -134,6 +151,8 @@ specified in the __contactFields__ parameter.  If there's a match for
 _any_ of the specified fields, the contact is returned. Use __contactFindOptions.desiredFields__
 parameter to control which contact properties must be returned back.
 
+Supported values for both __contactFields__ and __contactFindOptions.desiredFields__ parameters are enumerated in [`ContactFieldType`](#contactfieldtype) object.
+
 ### Parameters
 
 - __contactFields__: Contact fields to use as a search qualifier. _(DOMString[])_ [Required]
@@ -143,14 +162,16 @@ parameter to control which contact properties must be returned back.
 - __contactError__: Error callback function, invoked when an error occurs. [Optional]
 
 - __contactFindOptions__: Search options to filter navigator.contacts. [Optional]
-	
+
 	Keys include:
 
 	- __filter__: The search string used to find navigator.contacts. _(DOMString)_ (Default: `""`)
 
 	- __multiple__: Determines if the find operation returns multiple navigator.contacts. _(Boolean)_ (Default: `false`)
 
-    	- __desiredFields__: Contact fields to be returned back. If specified, the resulting `Contact` object only features values for these fields. _(DOMString[])_ [Optional]
+    - __desiredFields__: Contact fields to be returned back. If specified, the resulting `Contact` object only features values for these fields. _(DOMString[])_ [Optional]
+
+    - __hasPhoneNumber__(Android only): Filters the search to only return contacts with a phone number informed. _(Boolean)_ (Default: `false`)
 
 ### Supported Platforms
 
@@ -158,8 +179,8 @@ parameter to control which contact properties must be returned back.
 - BlackBerry 10
 - Firefox OS
 - iOS
-- Windows Phone 7 and 8
-- Windows (Windows Phone 8.1 devices only)
+- Windows Phone 8
+- Windows (Windows Phone 8.1 and Windows 10)
 
 ### Example
 
@@ -176,6 +197,7 @@ parameter to control which contact properties must be returned back.
     options.filter   = "Bob";
     options.multiple = true;
     options.desiredFields = [navigator.contacts.fieldType.id];
+    options.hasPhoneNumber = true;
     var fields       = [navigator.contacts.fieldType.displayName, navigator.contacts.fieldType.name];
     navigator.contacts.find(fields, onSuccess, onError, options);
 
@@ -200,7 +222,6 @@ function specified by the __contactSuccess__ parameter.
 - Android
 - iOS
 - Windows Phone 8
-- Windows 8
 - Windows
 
 ### Example
@@ -210,6 +231,27 @@ function specified by the __contactSuccess__ parameter.
         },function(err){
             console.log('Error: ' + err);
         });
+
+### Android Quirks
+
+This plugin launches an external Activity for picking contacts. See the
+[Android Lifecycle Guide](http://cordova.apache.org/docs/en/latest/guide/platforms/android/index.html#lifecycle-guide)
+for an explanation of how this affects your application. If the plugin returns
+its result in the `resume` event, then you must first wrap the returned object
+in a `Contact` object before using it. Here is an example:
+
+```javascript
+function onResume(resumeEvent) {
+    if(resumeEvent.pendingResult) {
+        if(resumeEvent.pendingResult.pluginStatus === "OK") {
+            var contact = navigator.contacts.create(resumeEvent.pendingResult.result);
+            successCallback(contact);
+        } else {
+            failCallback(resumeEvent.pendingResult.result);
+        }
+    }
+}
+```
 
 ## Contact
 
@@ -268,8 +310,7 @@ for details.
 - BlackBerry 10
 - Firefox OS
 - iOS
-- Windows Phone 7 and 8
-- Windows 8
+- Windows Phone 8
 - Windows
 
 ### Save Example
@@ -317,6 +358,32 @@ for details.
     // remove the contact from the device
     contact.remove(onSuccess,onError);
 
+### Removing phone number(s) from a saved contact
+
+    // Example to create a contact with 3 phone numbers and then remove
+    // 2 phone numbers. This example is for illustrative purpose only
+    var myContact = navigator.contacts.create({"displayName": "Test User"});
+    var phoneNumbers = [];
+
+    phoneNumbers[0] = new ContactField('work', '768-555-1234', false);
+    phoneNumbers[1] = new ContactField('mobile', '999-555-5432', true); // preferred number
+    phoneNumbers[2] = new ContactField('home', '203-555-7890', false);
+
+    myContact.phoneNumbers = phoneNumbers;
+    myContact.save(function (contact_obj) {
+        var contactObjToModify = contact_obj.clone();
+        contact_obj.remove(function(){
+            var phoneNumbers = [contactObjToModify.phoneNumbers[0]];
+            contactObjToModify.phoneNumbers = phoneNumbers;
+            contactObjToModify.save(function(c_obj){
+                console.log("All Done");
+            }, function(error){
+                console.log("Not able to save the cloned object: " + error);
+            });
+        }, function(contactError) {
+            console.log("Contact Remove Operation failed: " + contactError);
+        });
+    });
 
 ### Android 2.X Quirks
 
@@ -345,7 +412,7 @@ for details.
 
 - __categories__:  This property is currently not supported, returning `null`.
 
-### Windows Phone 7 and 8 Quirks
+### Windows Phone 8 Quirks
 
 - __displayName__: When creating a contact, the value provided for the display name parameter differs from the display name retrieved when finding the contact.
 
@@ -377,7 +444,7 @@ for details.
 
 - __categories__: Not supported, returning `null`.
 
-- __remove__: Method is not supported
+- __remove__: Method is only supported in Windows 10 or above.
 
 ## ContactAddress
 
@@ -411,8 +478,7 @@ a `ContactAddress[]` array.
 - BlackBerry 10
 - Firefox OS
 - iOS
-- Windows Phone 7 and 8
-- Windows 8
+- Windows Phone 8
 - Windows
 
 ### Example
@@ -441,6 +507,7 @@ a `ContactAddress[]` array.
     // find all contacts
     var options = new ContactFindOptions();
     options.filter = "";
+    options.multiple = true;
     var filter = ["displayName", "addresses"];
     navigator.contacts.find(filter, onSuccess, onError, options);
 
@@ -476,10 +543,6 @@ a `ContactAddress[]` array.
 
 - __formatted__: Currently not supported.
 
-### Windows 8 Quirks
-
-- __pref__: Not supported
-
 ### Windows Quirks
 
 - __pref__: Not supported
@@ -502,6 +565,7 @@ The `ContactError` object is returned to the user through the
 - `ContactError.PENDING_OPERATION_ERROR` (code 3)
 - `ContactError.IO_ERROR` (code 4)
 - `ContactError.NOT_SUPPORTED_ERROR` (code 5)
+- `ContactError.OPERATION_CANCELLED_ERROR` (code 6)
 - `ContactError.PERMISSION_DENIED_ERROR` (code 20)
 
 
@@ -538,8 +602,7 @@ string.
 - BlackBerry 10
 - Firefox OS
 - iOS
-- Windows Phone 7 and 8
-- Windows 8
+- Windows Phone 8
 - Windows
 
 ### Example
@@ -573,10 +636,6 @@ string.
 
 - __pref__: Not supported, returning `false`.
 
-### Windows8 Quirks
-
-- __pref__: Not supported, returning `false`.
-
 ### Windows Quirks
 
 - __pref__: Not supported, returning `false`.
@@ -607,8 +666,7 @@ Contains different kinds of information about a `Contact` object's name.
 - BlackBerry 10
 - Firefox OS
 - iOS
-- Windows Phone 7 and 8
-- Windows 8
+- Windows Phone 8
 - Windows
 
 ### Example
@@ -630,6 +688,7 @@ Contains different kinds of information about a `Contact` object's name.
 
     var options = new ContactFindOptions();
     options.filter = "";
+    options.multiple = true;
     filter = ["displayName", "name"];
     navigator.contacts.find(filter, onSuccess, onError, options);
 
@@ -660,7 +719,7 @@ Contains different kinds of information about a `Contact` object's name.
 
 - __formatted__: Partially supported.  Returns iOS Composite Name, but is read-only.
 
-### Windows 8 Quirks
+### Windows Quirks
 
 - __formatted__: This is the only name property, and is identical to `displayName`, and `nickname`
 
@@ -673,10 +732,6 @@ Contains different kinds of information about a `Contact` object's name.
 - __honorificPrefix__: not supported
 
 - __honorificSuffix__: not supported
-
-### Windows Quirks
-
-- __formatted__: It is identical to `displayName`
 
 
 ## ContactOrganization
@@ -704,7 +759,7 @@ properties.  A `Contact` object stores one or more
 - BlackBerry 10
 - Firefox OS
 - iOS
-- Windows Phone 7 and 8
+- Windows Phone 8
 - Windows (Windows 8.1 and Windows Phone 8.1 devices only)
 
 ### Example
@@ -727,6 +782,7 @@ properties.  A `Contact` object stores one or more
 
     var options = new ContactFindOptions();
     options.filter = "";
+    options.multiple = true;
     filter = ["displayName", "organizations"];
     navigator.contacts.find(filter, onSuccess, onError, options);
 
@@ -773,3 +829,34 @@ properties.  A `Contact` object stores one or more
 - __pref__: Not supported, returning `false`.
 
 - __type__: Not supported, returning `null`.
+
+## ContactFieldType
+The `ContactFieldType` object is an enumeration of possible field types, such as `'phoneNumbers'` or `'emails'`, that could be used to control which contact properties must be returned back from `contacts.find()` method (see `contactFindOptions.desiredFields`), or to specify fields to search in (through `contactFields` parameter). Possible values are:
+
+- `navigator.contacts.fieldType.addresses`
+- `navigator.contacts.fieldType.birthday`
+- `navigator.contacts.fieldType.categories`
+- `navigator.contacts.fieldType.country`
+- `navigator.contacts.fieldType.department`
+- `navigator.contacts.fieldType.displayName`
+- `navigator.contacts.fieldType.emails`
+- `navigator.contacts.fieldType.familyName`
+- `navigator.contacts.fieldType.formatted`
+- `navigator.contacts.fieldType.givenName`
+- `navigator.contacts.fieldType.honorificPrefix`
+- `navigator.contacts.fieldType.honorificSuffix`
+- `navigator.contacts.fieldType.id`
+- `navigator.contacts.fieldType.ims`
+- `navigator.contacts.fieldType.locality`
+- `navigator.contacts.fieldType.middleName`
+- `navigator.contacts.fieldType.name`
+- `navigator.contacts.fieldType.nickname`
+- `navigator.contacts.fieldType.note`
+- `navigator.contacts.fieldType.organizations`
+- `navigator.contacts.fieldType.phoneNumbers`
+- `navigator.contacts.fieldType.photos`
+- `navigator.contacts.fieldType.postalCode`
+- `navigator.contacts.fieldType.region`
+- `navigator.contacts.fieldType.streetAddress`
+- `navigator.contacts.fieldType.title`
+- `navigator.contacts.fieldType.urls`

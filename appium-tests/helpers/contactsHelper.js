@@ -1,3 +1,4 @@
+/* jshint node: true */
 /*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,25 +20,22 @@
  *
 */
 
-/**
- *  ContactError.
- *  An error code assigned by an implementation when an error has occurred
- * @constructor
- */
-var ContactError = function(err) {
-    this.code = (typeof err != 'undefined' ? err : null);
+'use strict';
+
+module.exports.getContactName = function (firstName, lastName) {
+    var formattedName;
+    if (typeof firstName !== 'undefined' || typeof lastName !== 'undefined') {
+        var delimiter = '';
+        if (firstName) {
+            delimiter = ' ';
+        }
+        formattedName = firstName + delimiter + lastName;
+    }
+
+    var contactName = {
+        formatted: formattedName,
+        familyName: lastName,
+        givenName: firstName
+    };
+    return contactName;
 };
-
-/**
- * Error codes
- */
-ContactError.UNKNOWN_ERROR = 0;
-ContactError.INVALID_ARGUMENT_ERROR = 1;
-ContactError.TIMEOUT_ERROR = 2;
-ContactError.PENDING_OPERATION_ERROR = 3;
-ContactError.IO_ERROR = 4;
-ContactError.NOT_SUPPORTED_ERROR = 5;
-ContactError.OPERATION_CANCELLED_ERROR = 6;
-ContactError.PERMISSION_DENIED_ERROR = 20;
-
-module.exports = ContactError;

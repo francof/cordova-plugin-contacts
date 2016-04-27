@@ -21,8 +21,10 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
     xmlns:rim="http://www.blackberry.com/ns/widgets"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:m3="http://schemas.microsoft.com/appx/2014/manifest"
+    xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
     id="cordova-plugin-contacts"
-    version="1.0.1-dev">
+    version="2.1.1-dev">
 
     <name>Contacts</name>
     <description>Cordova Contacts Plugin</description>
@@ -31,12 +33,17 @@
     <repo>https://git-wip-us.apache.org/repos/asf/cordova-plugin-contacts.git</repo>
     <issue>https://issues.apache.org/jira/browse/CB/component/12320652</issue>
 
+    <dependency id="cordova-plugin-compat" version="^1.0.0" />
+
     <js-module src="www/contacts.js" name="contacts">
         <clobbers target="navigator.contacts" />
     </js-module>
 
     <js-module src="www/Contact.js" name="Contact">
         <clobbers target="Contact" />
+    </js-module>
+
+    <js-module src="www/convertUtils.js" name="convertUtils">
     </js-module>
 
     <js-module src="www/ContactAddress.js" name="ContactAddress">
@@ -105,7 +112,7 @@
         <source-file src="src/android/ContactAccessorSdk5.java" target-dir="src/org/apache/cordova/contacts" />
         <source-file src="src/android/ContactManager.java" target-dir="src/org/apache/cordova/contacts" />
     </platform>
-    
+
     <!-- ubuntu -->
     <platform name="ubuntu">
         <config-file target="config.xml" parent="/*">
@@ -167,21 +174,6 @@
         <dependency id="com.blackberry.pim.lib" />
     </platform>
 
-    <!-- wp7 -->
-    <platform name="wp7">
-        <config-file target="config.xml" parent="/*">
-            <feature name="Contacts">
-                <param name="wp-package" value="Contacts"/>
-            </feature>
-        </config-file>
-
-        <config-file target="Properties/WMAppManifest.xml" parent="/Deployment/App/Capabilities">
-            <Capability Name="ID_CAP_CONTACTS" />
-        </config-file>
-
-        <source-file src="src/wp/Contacts.cs" />
-        <source-file src="src/wp/ContactsHelper.cs" />
-    </platform>
 
     <!-- wp8 -->
     <platform name="wp8">
@@ -201,7 +193,7 @@
         <source-file src="src/wp/ContactPicker.xaml.cs" />
         <source-file src="src/wp/ContactPickerTask.cs" />
     </platform>
-    
+
     <!-- firefoxos -->
     <platform name="firefoxos">
         <config-file target="config.xml" parent="/*">
@@ -211,7 +203,7 @@
         <js-module src="src/firefoxos/ContactsProxy.js" name="ContactsProxy">
             <runs />
         </js-module>
-    </platform>    
+    </platform>
 
     <!-- Windows 8 -->
     <platform name="windows8">
@@ -227,6 +219,9 @@
         </js-module>
         <config-file target="package.phone.appxmanifest" parent="/Package/Capabilities">
             <m3:Capability Name="contacts" />
+        </config-file>
+        <config-file target="package.appxmanifest" parent="/Package/Capabilities" versions=">=10.0.0">
+            <uap:Capability Name="contacts" />
         </config-file>
     </platform>
 
